@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class UserController {
 
@@ -58,7 +62,29 @@ public class UserController {
     }
 
     @RequestMapping(value = {"/", "/welcome"}, method = RequestMethod.GET)
-    public String welcome() {
+    public String welcome(HttpServletRequest request) {
+        request.setAttribute("imageList", getImageListFromBackend());
+        request.setAttribute("videoList", getVideoListFromBackend());
         return "welcome";
+    }
+
+    private List<String> getImageListFromBackend() {
+        // 在这里编写获取图片列表数据的逻辑
+        // 例如，从数据库、文件系统或其他数据源中获取数据
+        List<String> imageList = new ArrayList<>();
+        // 添加图片URL到列表中
+        imageList.add("image.jpg");
+        imageList.add("image.jpg");
+        imageList.add("image.jpg");
+        return imageList;
+    }
+
+    private List<String> getVideoListFromBackend() {
+        List<String> imageList = new ArrayList<>();
+        // 添加图片URL到列表中
+        imageList.add("video.mp4");
+        imageList.add("video.mp4");
+        imageList.add("video.mp4");
+        return imageList;
     }
 }
