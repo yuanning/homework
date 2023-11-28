@@ -1,7 +1,9 @@
 package com.hellokoding.auth.service;
 
+import com.hellokoding.auth.mapper.UserImageMapper;
 import com.hellokoding.auth.mapper.UserMapper;
 import com.hellokoding.auth.model.User;
+import com.hellokoding.auth.model.UserImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private UserImageMapper userImageMapper;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -28,5 +33,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return userMapper.findByUsername(username);
+    }
+
+    @Override
+    public void insertImageData(UserImage userImage) {
+        userImage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        userImageMapper.insertImageFile(userImage);
     }
 }
