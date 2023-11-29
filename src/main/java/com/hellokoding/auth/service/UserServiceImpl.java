@@ -4,6 +4,7 @@ import com.hellokoding.auth.mapper.UserImageMapper;
 import com.hellokoding.auth.mapper.UserMapper;
 import com.hellokoding.auth.model.User;
 import com.hellokoding.auth.model.UserImage;
+import com.hellokoding.auth.model.UserVideo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,11 @@ public class UserServiceImpl implements UserService {
     public void insertImageData(UserImage userImage) {
         userImage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         userImageMapper.insertImageFile(userImage);
+    }
+
+    @Override
+    public void insertVideoData(UserVideo userVideo) {
+        userVideo.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        userImageMapper.insertVideoFile(userVideo);
     }
 }

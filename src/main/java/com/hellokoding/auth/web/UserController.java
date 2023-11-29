@@ -1,9 +1,12 @@
 package com.hellokoding.auth.web;
 
+import com.hellokoding.auth.dto.ImageDto;
+import com.hellokoding.auth.dto.VideoDto;
 import com.hellokoding.auth.mapper.UserImageMapper;
 import com.hellokoding.auth.mapper.UserMapper;
 import com.hellokoding.auth.model.User;
 import com.hellokoding.auth.model.UserImage;
+import com.hellokoding.auth.model.UserVideo;
 import com.hellokoding.auth.service.SecurityService;
 import com.hellokoding.auth.service.UserService;
 import com.hellokoding.auth.validator.UserValidator;
@@ -76,7 +79,7 @@ public class UserController {
     @RequestMapping(value = {"/", "/welcome"}, method = RequestMethod.GET)
     public String welcome(HttpServletRequest request) {
         request.setAttribute("imageList", getImageListFromBackend(request));
-        request.setAttribute("videoList", getVideoListFromBackend());
+        request.setAttribute("videoList", getVideoListFromBackend(request));
 
         return "welcome";
     }
@@ -111,6 +114,54 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/videoUpload", method = RequestMethod.POST)
+    public String videoUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        // 处理上传的文件
+        if (!file.isEmpty()) {
+            try {
+                // 获取文件名
+                String fileName = file.getOriginalFilename();
+                // 获取文件数据
+                byte[] fileData = file.getBytes();
+
+                // 在此处执行你希望进行的文件处理操作
+                UserVideo userVideo = new UserVideo();
+                userVideo.setVideoData(fileData);
+                userVideo.setVideoName(fileName);
+                //get current User Info
+                String userName = request.getUserPrincipal().getName();
+                User user = userMapper.findByUsername(userName);
+                userVideo.setUserId(Integer.parseInt(String.valueOf(user.getId())));
+                userService.insertVideoData(userVideo);
+
+                return "redirect:/welcome";
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "redirect:/welcome";
+            }
+        } else {
+            return "redirect:/welcome";
+        }
+    }
+
+    @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String deleteImage(@RequestBody ImageDto imageDto, HttpServletRequest request) {
+        String userName = request.getUserPrincipal().getName();
+        User user = userMapper.findByUsername(userName);
+        userImageMapper.deleteImage(imageDto.getImageId(), user.getId());
+        return "welcome";
+    }
+
+    @RequestMapping(value = "/deleteVideo", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String deleteVideo(@RequestBody VideoDto videoDto, HttpServletRequest request) {
+        String userName = request.getUserPrincipal().getName();
+        User user = userMapper.findByUsername(userName);
+        userImageMapper.deleteVideo(videoDto.getVideoId(), user.getId());
+        return "welcome";
+    }
+
     private List<UserImage> getImageListFromBackend(HttpServletRequest request) {
         // 在这里编写获取图片列表数据的逻辑
         //get current User Info
@@ -126,12 +177,18 @@ public class UserController {
         return list;
     }
 
-    private List<String> getVideoListFromBackend() {
-        List<String> imageList = new ArrayList<>();
-        // 添加图片URL到列表中
-        imageList.add("video.mp4");
-        imageList.add("video.mp4");
-        imageList.add("video.mp4");
-        return imageList;
+    private List<UserVideo> getVideoListFromBackend(HttpServletRequest request) {
+        // 在这里编写获取图片列表数据的逻辑
+        //get current User Info
+        String userName = request.getUserPrincipal().getName();
+        User user = userMapper.findByUsername(userName);
+
+        List<UserVideo> list = userImageMapper.findVideoByUserId(user.getId());
+        if (!CollectionUtils.isEmpty(list)) {
+            for (UserVideo userVideo : list) {
+                userVideo.setVideoBase64(Base64.getEncoder().encodeToString(userVideo.getVideoData()));
+            }
+        }
+        return list;
     }
 }

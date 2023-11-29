@@ -11,4 +11,13 @@
         where user_id = #{userId}
     </select>
 
+    <select id="findVideoByUserId" resultType="com.hellokoding.auth.model.UserVideo">
+        select id, user_id, video_name, video_data, created_at from user_videos
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertVideoFile" parameterType="com.hellokoding.auth.model.UserVideo">
+        INSERT INTO user_videos (user_id, video_name, video_data, created_at)
+        VALUES (#{userId}, #{videoName}, #{videoData}, #{createdAt})
+    </insert>
 </mapper>
