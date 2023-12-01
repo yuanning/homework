@@ -228,6 +228,9 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 <script>
+    <!-- define server host -->
+    serverHost = "http://localhost:8080";
+
     function changeList() {
         var typeSelect = document.getElementById("typeSelect");
         var imageList = document.querySelector(".image-list");
@@ -243,6 +246,7 @@
     }
 
     $(document).ready(function() {
+
         $("#imageUploadBtn").click(function() {
             // 获取文件名和文件数据
             var fileName = $("#fileName").val();
@@ -254,7 +258,7 @@
 
             // 发送文件数据到后端接口
             $.ajax({
-                url: "http://localhost:8080/imageUpload",
+                url: serverHost+"/imageUpload",
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -281,7 +285,7 @@
 
             // 发送文件数据到后端接口
             $.ajax({
-                url: "http://localhost:8080/videoUpload",
+                url: serverHost+"/videoUpload",
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -302,7 +306,7 @@
     function deleteImage(imageId) {
         // 发送删除请求到后端接口
         $.ajax({
-            url: "http://localhost:8080/deleteImage",
+            url: serverHost+"/deleteImage",
             type: "DELETE",
             data: JSON.stringify({"imageId": imageId}),
             contentType: "application/json",
@@ -321,7 +325,7 @@
     function deleteVideo(videoId) {
         // 发送删除请求到后端接口
         $.ajax({
-            url: "http://localhost:8080/deleteVideo",
+            url: serverHost+"/deleteVideo",
             type: "DELETE",
             data: JSON.stringify({"videoId": videoId}),
             contentType: "application/json",
